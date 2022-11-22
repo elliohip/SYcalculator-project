@@ -8,6 +8,15 @@ document.getElementById("-").addEventListener("click", pickOperator);
 document.getElementById("*").addEventListener("click", pickOperator);
 document.getElementById("/").addEventListener("click", pickOperator);
 
+
+const EQUALS_BUTTON = document.createElement('button');
+
+EQUALS_BUTTON.innerHTML = '=';
+
+EQUALS_BUTTON.addEventListener('click', toPostfix);
+
+document.getElementById('ops').appendChild(EQUALS_BUTTON);
+
 /**
  * string for the equation
  * IMPORTANT
@@ -85,7 +94,7 @@ let operatorStack = new Stack();
 
 let numberQueue = new Queue();
 
-let selected = new Queue();
+let selected = [];
 
 var pMap = new Map();
 
@@ -132,12 +141,13 @@ createNumbers();
  */
 function pick(e) {
 
-    selected.enqueue(e.target.innerHTML);
+    selected.push(e.target.innerHTML);
 
     console.log(e.target.innerHTML);
 
     equationString += e.target.innerHTML;
     console.log(selected);
+    setDisplay(equationString);
 }
 
 /**
@@ -156,10 +166,11 @@ function setDisplay(d) {
  */
 function pickOperator(e) {
     operatorStack.push(e.target.innerHTML);
-    numberQueue.enqueue(Number(selected.toString()));
-    selected = selected.clear();
+    // numberQueue.enqueue(Number(selected.toString()));
+    selected = [];
     equationString += e.target.innerHTML;
-
+    console.log('equation_string: ' + equationString);
+    setDisplay(equationString);
 }
 
 /**
@@ -167,16 +178,18 @@ function pickOperator(e) {
  * 
  * needed data: operatorStack, outputQueue, numberQueue, equationString
  */
-function operate() {
+function toPostfix() {
+
+    console.log('postfix fired');
 
     let index1 = 0;
     let index2 = 0;
 
     let postfixString = "";
 
-    for (let i = 0; i < equationString.length(); i++) {
+    for (let i = 0; i < equationString.length; i++) {
 
-        if (!operators.contains(equationString.charAt(i))) {
+        if (!OPERATORS.includes(equationString.charAt(i))) {
 
             index2++;
 
@@ -184,20 +197,25 @@ function operate() {
             
         }
 
-        if (operators.contains(equationString.charAt(i))) {
+        if (OPERATORS.includes(equationString.charAt(i))) {
 
             let operator = equationString.charAt(i);
 
 
 
-            outputQueue.enqueue(Number(equationString().substring(index1, index2)));
+            outputQueue.enqueue(Number(equationString.substring(index1, index2)));
 
-            if (pMap.get.(operatorStack.peek())) {
-                operatorStack.push(operator);
+            if (pMap.get(operatorStack.peek()) > pMap.get(operator)) {
+                
+                postfixString += operator;
+                console.log(operator);
+                console.log('postfix_string: ' + postfixString);
             }
 
+            console.log(operator);
             index2++;
             index1 = index2;
+            console.log('postfix_string: ' + postfixString);
             
 
         }
