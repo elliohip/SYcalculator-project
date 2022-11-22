@@ -54,7 +54,7 @@ class Queue {
     toString() {
         let s = "";
 
-        for (let i = this.head; i < this.content.length(); i++) {
+        for (let i = this.head; i < this.content.length; i++) {
             s += this.content[i].toString()
 
             if (i < this.content.length() - 21) {
@@ -193,7 +193,7 @@ function toPostfix() {
 
             index2++;
 
-            postfixString += equationString.charAt(i);
+            
             
         }
 
@@ -201,11 +201,14 @@ function toPostfix() {
 
             let operator = equationString.charAt(i);
 
+            numberQueue.enqueue(Number(equationString.substring(index1, index2)));
 
+            console.log("substring: " + equationString.substring(index1, index2));
 
-            outputQueue.enqueue(Number(equationString.substring(index1, index2)));
+            postfixString += equationString.substring(index1, index2);
+            
 
-            if (pMap.get(operatorStack.peek()) > pMap.get(operator)) {
+            if (pMap.get(operatorStack.peek()) > pMap.get(operator) || operatorStack.peek() == undefined) {
                 
                 postfixString += operator;
                 console.log(operator);
@@ -215,11 +218,13 @@ function toPostfix() {
             console.log(operator);
             index2++;
             index1 = index2;
-            console.log('postfix_string: ' + postfixString);
+            
             
 
         }
     }
+    console.log('number_queue: '  + numberQueue)
+    console.log('postfix_string: ' + postfixString);
 }
 
 setDisplay(equationString);
