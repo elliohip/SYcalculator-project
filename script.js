@@ -18,10 +18,15 @@ EQUALS_BUTTON.addEventListener('click', toPostfix);
 document.getElementById('ops').appendChild(EQUALS_BUTTON);
 
 /**
- * string for the equation
- * IMPORTANT
+ * array to store string representations of user inputed tokens,
+ * each item is either a string represented as a number, or an operator
  */
-let equationString = "";
+let equation_array = [];
+
+/**
+ * string for the user inputed number token, needed to keep track of user input
+ */
+let token_string = "";
 
 
 
@@ -37,13 +42,24 @@ class Queue {
     }
 
     enqueue(item) {
-        this.content[this.head] = item;
-        this.head++;
+
+        if (this.size == 0) {
+            this.content[this.tail] = item;
+            this.size++;
+        }
+        else {
+
+        this.tail++;
+        this.content[this.tail] = item;
         this.size++;
+
+        }
+        
     }
     dequeue() {
-        let o = content[this.tail];
-        delete this.content[this.tail];
+        let o = this.content[this.head];
+        delete this.content[this.head];
+        this.head++;
         this.size--;
         return o;
     }
@@ -51,17 +67,6 @@ class Queue {
         return this.size==0;
     }
 
-    toString() {
-        let s = "";
-
-        for (let i = this.head; i < this.content.length; i++) {
-            s += this.content[i].toString()
-
-            if (i < this.content.length() - 21) {
-                s += ", ";
-            }
-        }
-    }
 }
 
 class Stack {
@@ -75,30 +80,31 @@ class Stack {
             this.size++;
         }
         pop() {
-            let ob = content[this.size];
-            delete content[this.size];
+            let ob = this.content[this.size - 1];
+            delete this.content[this.size - 1];
+            this.size--;
             return ob;
         }
         peek(){
-            return this.content[this.size];
+            return this.content[this.size - 1];
         }
         isEmpty() {
-            return this.size==0;
+            return this.size == 0;
         }
 }
 
 
-// Structures to be used in implementing calculations, conversin to RPN
-let outputQueue = new Queue();
-let operatorStack = new Stack();
+// Structures to be used in conversin to Reverse Polish Notation
+let output_queue = new Queue();
+let operator_stack = new Stack();
 
-let numberQueue = new Queue();
+let number_queue = new Queue();
 
 let selected = [];
 
 var pMap = new Map();
 
-// set key value pairs
+// set key value pairs in hashmap, for assesing operator prescedence
 
 pMap.set('+', 1);
 pMap.set('-', 1);
@@ -134,20 +140,25 @@ function createNumbers() {
 createNumbers();
 
 /**
- * eventListener function, allows user to pick a number for selection queue
+ * eventListener function, allows user to pick a number for token string
  * 
  * @param e
  * event handler param
  */
 function pick(e) {
 
-    selected.push(e.target.innerHTML);
+    
 
     console.log(e.target.innerHTML);
 
-    equationString += e.target.innerHTML;
-    console.log(selected);
-    setDisplay(equationString);
+    
+
+    token_string += String(e.target.innerHTML);
+
+    
+    console.log("equation string: " + equation_array.toString());
+    console.log(token_string);
+    setDisplay(equation_array.toString());
 }
 
 /**
@@ -165,66 +176,81 @@ function setDisplay(d) {
  * event parameter
  */
 function pickOperator(e) {
-    operatorStack.push(e.target.innerHTML);
-    // numberQueue.enqueue(Number(selected.toString()));
-    selected = [];
-    equationString += e.target.innerHTML;
-    console.log('equation_string: ' + equationString);
-    setDisplay(equationString);
+
+    // operator_stack.push(e.target.innerHTML);
+
+    equation_array.push(token_string);
+    equation_array.push(e.target.innerHTML);
+
+    token_string = "";
+
+    console.log('equation string: ' + equation_array.toString());
+    setDisplay(equation_array.toString());
 }
 
 /**
  * 
  * 
- * needed data: operatorStack, outputQueue, numberQueue, equationString
+ * needed data: operator_stack, output_queue, number_queue, equation_string
  */
 function toPostfix() {
+
+    // basically copies pick operator in begining
+    equation_array.push(token_string);
+
+    token_string = "";
+
+    console.log('equation string: ' + equation_array.toString());
+    setDisplay(equation_array.toString());
 
     console.log('postfix fired');
 
     let index1 = 0;
     let index2 = 0;
 
-    let postfixString = "";
+    let postfix_string = "";
 
-    for (let i = 0; i < equationString.length; i++) {
+    for (let i = 0; i < equation_array.length; i++) {
 
-        if (!OPERATORS.includes(equationString.charAt(i))) {
+        if (!OPERATORS.includes(equation_array[i])) {
 
-            index2++;
+            output_queue.enqueue(equation_array[i])
 
-            
-            
         }
+        if (OPERATORS.includes(equation_array[i])) {
 
-        if (OPERATORS.includes(equationString.charAt(i))) {
+            let operator = equation_array[i];
 
-            let operator = equationString.charAt(i);
+            console.log(pMap.get(operator_stack.peek()))
 
-            numberQueue.enqueue(Number(equationString.substring(index1, index2)));
+            while (pMap.get(operator_stack.peek()) > pMap.get(operator)) {
 
-            console.log("substring: " + equationString.substring(index1, index2));
+                output_queue.enqueue(operator_stack.pop());
 
-            postfixString += equationString.substring(index1, index2);
-            
-
-            if (pMap.get(operatorStack.peek()) > pMap.get(operator) || operatorStack.peek() == undefined) {
-                
-                postfixString += operator;
-                console.log(operator);
-                console.log('postfix_string: ' + postfixString);
             }
 
-            console.log(operator);
-            index2++;
-            index1 = index2;
-            
-            
+            operator_stack.push(operator);
 
         }
+        
     }
-    console.log('number_queue: '  + numberQueue)
-    console.log('postfix_string: ' + postfixString);
+
+    while (!operator_stack.isEmpty()) {
+        output_queue.enqueue(operator_stack.pop())
+
+    }
+
+    console.log('output_queue: '  + output_queue.content.toString())
+    console.log('postfix_string: ' + postfix_string);
 }
 
-setDisplay(equationString);
+function evaluateExpression() {
+    toPostfix();
+
+    while (!output_queue.isEmpty()) {
+
+    }
+
+}
+
+setDisplay(equation_array.toString());
