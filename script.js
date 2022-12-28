@@ -13,7 +13,7 @@ const EQUALS_BUTTON = document.createElement('button');
 
 EQUALS_BUTTON.innerHTML = '=';
 
-EQUALS_BUTTON.addEventListener('click', toPostfix);
+EQUALS_BUTTON.addEventListener('click', evaluateExpression);
 
 document.getElementById('ops').appendChild(EQUALS_BUTTON);
 
@@ -63,6 +63,11 @@ class Queue {
         this.size--;
         return o;
     }
+
+    checkFront() {
+        return this.content[this.head];
+    }
+
     isEmpty() {
         return this.size==0;
     }
@@ -244,12 +249,71 @@ function toPostfix() {
     console.log('postfix_string: ' + postfix_string);
 }
 
+/**
+ * 
+ * @param {Number} numb1 
+ * first operand
+ * @param {Number} numb2 
+ * second operand
+ * @param {String} operator 
+ * operator
+ */
+function operate(numb1, numb2, operator) {
+
+    switch (operator) {
+
+        case "+": return numb1 + numb2;
+        break;
+        case "-": return numb1 - numb2;
+        break;
+        case "*": return numb1 * numb2;
+        break;
+        case "/": return numb1 / numb2;
+        break;
+        default: throw new Error("invalid operator"); 
+        break;
+    }
+
+}
+
+let answer_stack = new Stack();
+
 function evaluateExpression() {
     toPostfix();
 
+    let first_number = 0;
+    let second_number = 0;
+
+    let answer = 0;
+
+    let temp = 0;
+
+    console.log(output_queue.content.toString());
+
     while (!output_queue.isEmpty()) {
 
+        if (!OPERATORS.includes(output_queue.checkFront())) {
+
+            answer_stack.push(output_queue.dequeue());
+
+        }
+        if (OPERATORS.includes(output_queue.checkFront())) {
+
+            first_number = parseFloat(answer_stack.pop());
+            second_number = parseFloat(answer_stack.pop());
+
+            temp = operate(second_number, first_number, output_queue.dequeue());
+
+            answer_stack.push(temp);
+
+            console.log(answer_stack.peek());
+            
+            
+        }
     }
+    setDisplay(answer_stack.peek());
+    console.log(answer_stack.peek());
+
 
 }
 
