@@ -2,6 +2,8 @@ const DISPLAY = document.getElementById("main-d");
 
 const OPERATORS = ['/', '*', '-', '+', '^']
 
+const CLEAR_BUTTON = document.getElementById("clear-bttn");
+
 // Buttons
 document.getElementById("+").addEventListener("click", pickOperator);
 document.getElementById("-").addEventListener("click", pickOperator);
@@ -12,6 +14,8 @@ document.getElementById("/").addEventListener("click", pickOperator);
 const EQUALS_BUTTON = document.createElement('button');
 
 EQUALS_BUTTON.innerHTML = '=';
+
+EQUALS_BUTTON.style.backgroundColor = "plum";
 
 EQUALS_BUTTON.addEventListener('click', evaluateExpression);
 
@@ -27,6 +31,11 @@ let equation_array = [];
  * string for the user inputed number token, needed to keep track of user input
  */
 let token_string = "";
+
+/**
+ * keeps track of string to set display to
+ */
+let equation_string = "";
 
 
 
@@ -124,13 +133,19 @@ pMap.set('^', 3);
  * creates a grid of numbers for the calculater as a User Intterface
  */
 function createNumbers() {
-    for (let i = 0; i <= 10; i++) {
+    for (let i = 0; i < 10; i++) {
 
         let b = document.createElement("button");
+
+
         
         b.innerHTML = i;
         
         document.getElementById("nums").appendChild(b);
+
+        b.style.backgroundColor = "cornflowerblue";
+
+        b.style.borderRadius = "10%";
 
         // add the eventListener
         
@@ -143,6 +158,26 @@ function createNumbers() {
     }
 }
 createNumbers();
+
+function clear() {
+
+    equation_array = [];
+
+    output_queue = new Queue();
+    operator_stack = new Stack();
+
+    number_queue = new Queue();
+
+    equation_string = "";
+
+    token_string = "";
+
+    setDisplay("");
+
+
+}
+
+CLEAR_BUTTON.addEventListener('click', clear);
 
 /**
  * eventListener function, allows user to pick a number for token string
@@ -160,10 +195,12 @@ function pick(e) {
 
     token_string += String(e.target.innerHTML);
 
+    equation_string += String(e.target.innerHTML);
+
     
     console.log("equation string: " + equation_array.toString());
     console.log(token_string);
-    setDisplay(equation_array.toString());
+    setDisplay(equation_string);
 }
 
 /**
@@ -187,10 +224,12 @@ function pickOperator(e) {
     equation_array.push(token_string);
     equation_array.push(e.target.innerHTML);
 
+    equation_string += e.target.innerHTML;
+
     token_string = "";
 
     console.log('equation string: ' + equation_array.toString());
-    setDisplay(equation_array.toString());
+    setDisplay(equation_string);
 }
 
 /**

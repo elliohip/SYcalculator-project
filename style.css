@@ -1,0 +1,28 @@
+.numbers#nums {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    width: 30%;
+    background-color: black;
+    border-bottom-left-radius: 5%;
+    border-bottom-right-radius: 5%;
+}
+
+.operators {
+    display: grid;
+    width: 30%;
+    grid-template-columns: repeat(6, 16.6%);
+    background-color: black;
+    border-top-left-radius: 5%;
+    border-top-right-radius: 5%;
+}
+
+.op {
+    background-color: orange;
+    border-radius: 10%;
+}
+
+.display {
+    width: 30%;
+    height: 10%;
+    
+}
