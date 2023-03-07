@@ -1,19 +1,25 @@
 .numbers#nums {
     display: grid;
-    grid-template-columns: 33% 33% 33%;
-    width: 30%;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+
+    height: fit-content;
+    gap: 3%;
     background-color: black;
     border-bottom-left-radius: 5%;
     border-bottom-right-radius: 5%;
+
+    
 }
 
 .operators {
     display: grid;
-    width: 30%;
-    grid-template-columns: repeat(6, 16.6%);
+    grid-template-columns: repeat(6, 1fr);
     background-color: black;
     border-top-left-radius: 5%;
     border-top-right-radius: 5%;
+    gap: 3%;
 }
 
 .op {
@@ -24,5 +30,13 @@
 .display {
     width: 30%;
     height: 10%;
-    
+    background-color: white;
+}
+
+.body {
+    width: clamp(300px, 30vw, 600px);
+    display: grid; 
+    grid-template-rows: 1fr 1fr 5fr;
+    grid-template-columns: 1fr;
+    background-color: black;
 }

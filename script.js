@@ -1,5 +1,7 @@
 const DISPLAY = document.getElementById("main-d");
 
+DISPLAY.style.color = "white";
+
 const OPERATORS = ['/', '*', '-', '+', '^']
 
 const CLEAR_BUTTON = document.getElementById("clear-bttn");
